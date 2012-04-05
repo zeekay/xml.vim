@@ -1,10 +1,10 @@
 " Vim script file                                           vim600:fdm=marker:
 " FileType:     XML
-" Author:       Rene de Zwart <renez (at) lightcon.xs4all.nl> 
+" Author:       Rene de Zwart <renez (at) lightcon.xs4all.nl>
 " Maintainer:   Rene de Zwart <renez (at) lightcon.xs4all.nl>
-" Last Change:  Date: 2009-11-12 
+" Last Change:  Date: 2009-11-12
 " Version:      Revision: 1.37
-" 
+"
 " Licence:      This program is free software; you can redistribute it
 "               and/or modify it under the terms of the GNU General Public
 "               License.  See http://www.gnu.org/copyleft/gpl.txt
@@ -83,7 +83,7 @@ elseif &filetype == 'xhtml'
 	let b:xml_use_xhtml = 1
 en
 
-if ! exists("b:xmlPluginMappedKeys")
+if !exists("b:xmlPluginMappedKeys")
   let b:xmlPluginMappedKeys = []
 endif
 
@@ -99,7 +99,7 @@ let b:undo_ftplugin = "setlocal cms< isk<"
 if !exists("*NewFileXML")
 function! NewFileXML( )
     " Where is g:did_xhtmlcf_inits defined?
-    if &filetype == 'xml' || 
+    if &filetype == 'xml' ||
 			\ (!exists ("g:did_xhtmlcf_inits") &&
 			\ b:xml_use_xhtml &&
 			\ (&filetype =~ 'x\?html'))
@@ -120,7 +120,7 @@ function! s:Callback( xml_tag, isHtml )
         let text = HtmlAttribCallback (a:xml_tag)
     elseif exists ("*XmlAttribCallback")
         let text = XmlAttribCallback (a:xml_tag)
-    endif       
+    endif
     if text != '0'
         execute "normal! i " . text ."\<Esc>l"
     endif
@@ -128,23 +128,23 @@ endfunction
 endif
 
 " SavePos() saves position  in bufferwide variable                        {{{1
-fun! s:SavePos()	
+fun! s:SavePos()
 	retu 'call cursor('.line('.').','. col('.'). ')'
 endf
 
 " findOpenTag()                         {{{1
-fun! s:findOpenTag(flag)	
+fun! s:findOpenTag(flag)
 	call search(s:OpenTag,a:flag)
 endf
 
 " findCloseTag()                         {{{1
-fun! s:findCloseTag(flag)	
+fun! s:findCloseTag(flag)
 	call search(s:CloseTag,a:flag)
 endf
 
 " GetTagName() Gets the tagname from start position                     {{{1
 "Now lets go for the name part. The namepart are xmlnamechars which
-"is quite a big range. We assume that everything after '<' or '</' 
+"is quite a big range. We assume that everything after '<' or '</'
 "until the first 'space', 'forward slash' or '>' ends de name part.
 if !exists('*s:GetTagName')
 fun! s:GetTagName(from)
@@ -156,14 +156,14 @@ en
 " expect cursor to be on <
 fun! s:hasAtt()
 	"Check if this open tag has attributes
-	let l:line = line('.') | let l:col = col('.') 
+	let l:line = line('.') | let l:col = col('.')
 	if search(b:tagName . s:ReqAttrib,'W') > 0
     if l:line == line('.') && l:col == (col('.')-1)
 			let b:haveAtt = 1
 		en
 	en
 endf
- 
+
 
 " TagUnderCursor()  Is there a tag under the cursor?               {{{1
 " Set bufer wide variable
@@ -180,7 +180,7 @@ fun! s:TagUnderCursor()
 	let b:firstWasEndTag = 0
 	let l:haveTag = 0
 	let b:haveAtt = 0
-	
+
 	"Lets find forward a < or a >.  If we first find a > we might be in a tag.
 	"If we find a < first or nothing we are definitly not in a tag
 
@@ -221,7 +221,7 @@ fun! s:TagUnderCursor()
 	el
 		retu l:haveTag
 	en
-	
+
 	if search('[<>]','bW' ) >=0
 		if getline('.')[col('.')-1] == '<'
 			if getline('.')[col('.')] == '/'
@@ -243,12 +243,12 @@ fun! s:TagUnderCursor()
 
 	"we have established that we are between something like
 	"'</\?[^>]*>'
-	
+
 	let b:tagName = s:GetTagName(col('.') + b:firstWasEndTag)
-	"echo 'Tag ' . b:tagName 
+	"echo 'Tag ' . b:tagName
 
   "begin: gwang customization, do not work with an empty tag name
-  if b:tagName == '' 
+  if b:tagName == ''
 		retu l:haveTag
   en
   "end: gwang customization, do not work with an empty tag name
@@ -261,7 +261,7 @@ fun! s:TagUnderCursor()
 	retu l:haveTag
 endf
 en
- 
+
 " Match(tagname) Looks for open or close tag of tagname               {{{1
 " Set buffer wide variable
 "  - b:gotoCloseTag (if the Match tag is one)
@@ -318,7 +318,7 @@ let b:begcom=0
 			retu 1
 		en
 	elseif  getline('.')[col('.')-1] == '<' && getline('.')[col('.')]   == '!'
-		 \ && getline('.')[col('.')+1] == '-' && getline('.')[col('.')+2] == '-' 
+		 \ && getline('.')[col('.')+1] == '-' && getline('.')[col('.')+2] == '-'
 			let b:begcomcol= col('.')
 			let b:begcomline=line('.')
 			let b:begcom=1
@@ -338,10 +338,10 @@ let b:begcom=0
 	en
 	"Forward is not a ending comment
 	"is backward a starting comment
-	
+
 	if search('[<>]','bW' ) >=0
 		if getline('.')[col('.')-1] == '<' && getline('.')[col('.')]   == '!'
-		 \ && getline('.')[col('.')+1] == '-' && getline('.')[col('.')+2] == '-' 
+		 \ && getline('.')[col('.')+1] == '-' && getline('.')[col('.')+2] == '-'
 			let b:begcomcol=col('.')
 			let b:begcomline=line('.')
 			let b:begcom=1
@@ -351,18 +351,18 @@ let b:begcom=0
 	retu 0
 endf
 en
- 
+
 " DelComment()  Is there a Comment under the cursor?               {{{1
 "    - returns 1 (true)  or 0 (false)
 
 if !exists('*s:DelComment')
 fun! s:DelComment()
-	
+
 	let l:restore =  s:SavePos()
 	if s:InComment()
 		if b:begcom
 			if search('-->','W' ) >=0
-				normal! hh3x	
+				normal! hh3x
 		   	call cursor(b:begcomline,b:begcomcol)
 				normal! 4x
 				retu 1
@@ -371,7 +371,7 @@ fun! s:DelComment()
 			if search('<!--','bW' ) >=0
 				normal! 4x
 		   	call cursor(b:endcomline,b:endcomcol)
-				normal! hh3x	
+				normal! hh3x
 				retu 1
 			en
 		en
@@ -380,13 +380,13 @@ fun! s:DelComment()
 	retu 0
 endf
 en
- 
+
 " DelCommentSection()  Is there a Comment under the cursor?               {{{1
 "    - returns 1 (true)  or 0 (false)
 
 if !exists('*s:DelCommentSection')
 fun! s:DelCommentSection()
-	
+
 	let l:restore =  s:SavePos()
 	if s:InComment()
 		let l:sentinel = 'XmLSeNtInElXmL'
@@ -415,18 +415,18 @@ fun! s:DelCommentSection()
 	retu 0
 endf
 en
- 
+
 " DelCData()  Is there a CData under the cursor?               {{{1
 "    - returns 1 (true)  or 0 (false)
 
 if !exists('*s:DelCData')
 fun! s:DelCData()
-	
+
 	let l:restore =  s:SavePos()
 	if s:InCData()
 		if b:begdat
 			if search(']]>','W' ) >=0
-				normal! hh3x	
+				normal! hh3x
 		   	call cursor(b:begdatline,b:begdatcol)
 				normal! 9x
 				retu 1
@@ -435,7 +435,7 @@ fun! s:DelCData()
 			if search('<![CDATA[','bW' ) >=0
 				normal! 9x
 		   	call cursor(b:enddatline,b:enddatcol)
-				normal! hh3x	
+				normal! hh3x
 				retu 1
 			en
 		en
@@ -444,7 +444,7 @@ fun! s:DelCData()
 	retu 0
 endf
 en
- 
+
 " InCData()  Is there a CData under the cursor?               {{{1
 "    - returns 1 (true)  or 0 (false)
 
@@ -463,7 +463,7 @@ let b:begdat=0
 			let b:enddat=1
 			retu 1
 		en
-	elseif  getline('.')[col('.')-1] == '<' 
+	elseif  getline('.')[col('.')-1] == '<'
 		if  match(getline('.'),'<![CDATA[') > 0
 			let b:begdatcol= col('.')
 			let b:begdatline=line('.')
@@ -485,9 +485,9 @@ let b:begdat=0
 	en
 	"Forward is not a ending datment
 	"is backward a starting comment
-	
+
 	if search('[<>]','bW' ) >=0
-		if getline('.')[col('.')-1] == '<' 
+		if getline('.')[col('.')-1] == '<'
 			if  match(getline('.'),'<![CDATA[') > 0
 		let l:newname = inputdialog('Found CDATA')
 				let b:begdatcol=col('.')
@@ -500,14 +500,14 @@ let b:begdat=0
 	retu 0
 endf
 en
- 
- 
+
+
 " DelCDataSection()  Is there a CData under the cursor?               {{{1
 "    - returns 1 (true)  or 0 (false)
 
 if !exists('*s:DelCDataSection')
 fun! s:DelCDataSection()
-	
+
 	let l:restore =  s:SavePos()
 	if s:InCData()
 		let l:sentinel = 'XmLSeNtInElXmL'
@@ -536,11 +536,11 @@ fun! s:DelCDataSection()
 	retu 0
 endf
 en
- 
- 
+
+
 " Matches()  Matches de tagname under de cursor                       {{{1
 if !exists('*s:Matches')
-fun! s:Matches()	
+fun! s:Matches()
 	let l:restore =  s:SavePos()
 	if s:TagUnderCursor()
 		if s:Match(b:tagName)
@@ -553,7 +553,7 @@ en
 
 " MatchesVisual()  Matches de tagname under de cursor                       {{{1
 if !exists('*s:MatchesVisual')
-fun! s:MatchesVisual()	
+fun! s:MatchesVisual()
 	let l:restore =  s:SavePos()
 	if s:TagUnderCursor()
 		if b:firstWasEndTag
@@ -563,7 +563,7 @@ fun! s:MatchesVisual()
 		if s:Match(b:tagName)
 			if b:firstWasEndTag == 0
 				normal! f>
-			en 
+			en
 			retu
 		en
 		normal! v
@@ -602,7 +602,7 @@ function! s:makeElement()
 			start!
 		el
 			exe 'normal! a</pa>F<'
-			start 
+			start
 		en
 	en
 endfunction
@@ -610,7 +610,7 @@ en
 
 " CloseTagFun() closing the tag which is being typed                  {{{1
 if !exists('*s:CloseTagFun')
-fun! s:CloseTagFun()	
+fun! s:CloseTagFun()
 	let l:restore =  s:SavePos()
 	let l:endOfLine = ((col('.')+1) == col('$'))
 	if col('.') > 1 && getline('.')[col('.')-2] == '>'
@@ -669,7 +669,7 @@ endf
 en
 
 " BlockTag() Surround a visual block with a tag                       {{{1
-" Be carefull where You place the block 
+" Be carefull where You place the block
 " the top    is done with insert!
 " the bottem is done with append!
 if !exists('*s:BlockTag')
@@ -716,7 +716,7 @@ fun! s:BlockTag(multi)
 endf
 en
 " BlockWith() Surround a visual block with a open and a close          {{{1
-" Be carefull where You place the block 
+" Be carefull where You place the block
 " the top    is done with insert!
 " the bottem is done with append!
 if !exists('*s:BlockWith')
@@ -730,7 +730,7 @@ fun! s:BlockWith(open,close)
 endf
 en
 " vlistitem() Surround a visual block with a listitem para tag      {{{1
-" Be carefull where You place the block 
+" Be carefull where You place the block
 " the top    is done with insert!
 " the bottem is done with append!
 if !exists('*s:vlistitem')
@@ -749,7 +749,7 @@ if !exists('*s:Change')
 fun! s:Change()
 	let l:restore = s:SavePos()
 	if s:TagUnderCursor()
-		let l:newname = inputdialog('Change tag '.b:tagName.' to : ',b:lastTag) 
+		let l:newname = inputdialog('Change tag '.b:tagName.' to : ',b:lastTag)
 		if strlen( l:newname) == 0
 			retu
 		en
@@ -916,7 +916,7 @@ fun! s:FoldTagAll()
 		if l:level == 0
 			exe l:sline.',.fold'
 		el
-			let l:tmp = 
+			let l:tmp =
 				\ inputdialog("The tag ".l:tname."(".l:sline.") doesn't have a closetag")
 			break
 		en
@@ -933,7 +933,7 @@ fun! s:StartTag()
 	let l:level = 1
 	if getline('.')[col('.')-1] == '<'
 	  if s:TagUnderCursor()
-	    if b:firstWasEndTag 
+	    if b:firstWasEndTag
 				exe 'normal! i<'. b:tagName.">\<Esc>F<"
 				retu
 			el
@@ -942,7 +942,7 @@ fun! s:StartTag()
 		en
 	  exe l:restore
 	en
-	while l:level && search(s:OpenOrCloseTag ,'W') > 0 
+	while l:level && search(s:OpenOrCloseTag ,'W') > 0
 		let l:level = l:level + (getline('.')[col('.')] == '/' ? -1 : 1)
 	endwhile
 	if l:level == 0
@@ -995,7 +995,7 @@ fun! s:BeforeTag()
 			exe "normal! />\<Cr>a\<Cr></" . l:newname . ">\<Esc>"
 			let l:To = line('.')
 			exe b:gotoOpenTag
-			exe 'normal! i<' . l:newname . 
+			exe 'normal! i<' . l:newname .
 				\ (strlen(l:newatt) ? ' '.l:newatt : '' )
 				\.">\<Cr>\<Esc>"
 			let l:rep=&report
@@ -1140,7 +1140,7 @@ fun! s:FormatTagAll()
 		if l:level == 0
 			normal! hv'hogq
 		el
-			let l:tmp = 
+			let l:tmp =
 				\ inputdialog("The tag ".l:tname."(".l:sline.") doesn't have a closetag")
 			break
 		en
@@ -1194,8 +1194,8 @@ fun! s:IndentAll()
 				let l:level = l:level + 1
 			en
 		endwhile
-		if l:level 
-			let l:tmp = 
+		if l:level
+			let l:tmp =
 			\ inputdialog("The tags opening and closing are unbalanced ".l:level)
 		en
 	en
@@ -1226,10 +1226,12 @@ endfunction
 
 " unmapKeys()                         {{{1
 function! s:unmapKeys()
-  for mapped in b:xmlPluginMappedKeys
-    execute "silent! " . mapped[0] . "unmap <buffer> " . mapped[1]
-  endfor
-  let b:xmlPluginMappedKeys = []
+    if exists('b:xmlPluginMappedKeys')
+      for mapped in b:xmlPluginMappedKeys
+        execute "silent! " . mapped[0] . "unmap <buffer> " . mapped[1]
+      endfor
+    endif
+    let b:xmlPluginMappedKeys = []
 endfunction
 
 " Menu options: {{{1
@@ -1331,7 +1333,7 @@ function! s:XmlInstallDocumentation(full_name, revision)
     " Figure out document path based on full name of this script:
     let l:vim_plugin_path = fnamemodify(a:full_name, ':h')
     "let l:vim_doc_path   = fnamemodify(a:full_name, ':h:h') . l:doc_path
-    let l:vim_doc_path    = matchstr(l:vim_plugin_path, 
+    let l:vim_doc_path    = matchstr(l:vim_plugin_path,
             \ '.\{-}\ze\%(\%(ft\)\=plugin\|macros\)') . l:doc_path
     if (!(filewritable(l:vim_doc_path) == 2))
         echomsg "Doc path: " . l:vim_doc_path
@@ -1518,7 +1520,7 @@ for more information on this topic.
 If the file edited is of type "html" and "xml_use_html" is  defined then
 the following tags will not auto complete: <img>, <input>, <param>,
 <frame>, <br>, <hr>, <meta>, <link>, <base>, <area>
-        
+
 If the file edited is of type 'html' and 'xml_use_xhtml' is defined the
 above tags will autocomplete the xml closing staying xhtml compatable.
 ex. <hr> becomes <hr /> (see |xml-plugin-settings|)
@@ -1620,24 +1622,24 @@ for details.
 						<word>
                |
 						</word>
-            the suffix can be changed by setting 
+            the suffix can be changed by setting
 						let makeElementSuf = ',,,' in your .vimrc
 						Thanks to Bart van Deenen
 						(http://www.vim.org/scripts/script.php?script_id=632)
-						
+
 [ and ] mappings                            {{{2
           <LocalLeader>[        Delete <![CDATA[ ]]> delimiters
           <LocalLeader>{        Delete <![CDATA[ ]]> section
           <LocalLeader>]        Delete <!-- -->      delimiters
           <LocalLeader>}        Delete <!-- -->      section
-          [[        Goto to the previous open tag 
-          [[        Goto to the next open tag 
-          []        Goto to the previous close tag 
-          ][        Goto to the next  close tag 
+          [[        Goto to the previous open tag
+          [[        Goto to the next open tag
+          []        Goto to the previous close tag
+          ][        Goto to the next  close tag
           ["        Goto to the next  comment
           ]"        Goto the previous comment
 <LocalLeader>5  Jump to the matching tag.                           {{{2
-<LocalLeader>%  Jump to the matching tag.   
+<LocalLeader>%  Jump to the matching tag.
 
 
 <LocalLeader>c  Rename tag                                          {{{2
@@ -1648,7 +1650,7 @@ for details.
 <LocalLeader>d  Deletes the surrounding tags from the cursor.       {{{2
             <tag1>outter <tag2>inner text</tag2> text</tag1>
                |
-       Turns to: 
+       Turns to:
             outter <tag2>inner text</tag2> text
             |
 
@@ -1656,7 +1658,7 @@ for details.
         - and put it in register x.
             <tag1>outter <tag2>inner text</tag2> text</tag1>
                            |
-       Turns to: 
+       Turns to:
             <tag1>outter text</tag1>
 
 <LocalLeader>e  provide endtag for open tags.                       {{{2
@@ -1679,16 +1681,16 @@ for details.
 <LocalLeader>F  all tags of name 'tag' will be fold.                {{{2
       - If there isn't a tag under
         the cursor you will be asked for one.
-                  
+
 <LocalLeader>g  Format (Vim's gq function)                          {{{2
 			- will make a visual block of tag under cursor and then format using gq
 
-                  
+
 <LocalLeader>G  Format all tags under cursor (Vim's gq function)    {{{2
       - If there isn't a tag under
         the cursor you will be asked for one.
 
-                  
+
 <LocalLeader>I  Indent all tags     {{{2
       - will create a multiline layout every opening tag will be shifted out
 				and every closing tag will be shifted in. Be aware that the rendering
@@ -1696,7 +1698,7 @@ for details.
 				Be aware tha if the file is big, more than 1000 lines, the reformatting
 				takes a long time because vim has to make a big undo buffer.
 				For example using \I on the example below:
-        
+
 				<chapter><title>Indent</title><para>The documentation</para></chapter>
 
 			- Becomes
@@ -1710,9 +1712,9 @@ for details.
 					</para>
 				</chapter>
 
-                  
+
 <LocalLeader>j  Joins two the SAME sections together.               {{{2
-      -  The sections must be next to each other. 
+      -  The sections must be next to each other.
 			<para> This is line 1
 			 of a paragraph. </para>
 			<para> This is line 2
@@ -1720,11 +1722,11 @@ for details.
 			 of a paragraph. </para>
 		\j produces
 			<para> This is line 1
-			 of a paragraph. 
+			 of a paragraph.
 			 This is line 2
 			 of a paragraph. </para>
 
-<LocalLeader>l  visual surround the block with listitem and para     {{{2 
+<LocalLeader>l  visual surround the block with listitem and para     {{{2
 				When marking up docbook tekst you have the issue that listitems
 				consist of 2 item. This key combination inserts them both,
 
@@ -1734,7 +1736,7 @@ for details.
         <listitem>
             <para>blaah</para>
         </listitem>
-    
+
 <LocalLeader>o  Insert a tag inside the current one (like vim o)     {{{2
 				You are asked for tag and attributes.
 
@@ -1744,7 +1746,7 @@ for details.
         <tag1>
             <aftertag><tag2><tag3>blaah</tag3></tag2></aftertag>
         </tag1>
-    
+
 <LocalLeader>O  Insert a tag outside the current one (like vim O)     {{{2
 				You are asked for tag and attributes.
         <tag1><tag2><tag3>blaah</tag3></tag2></tag1>
@@ -1761,7 +1763,7 @@ for details.
             <para><listitem>list item content</para></listitem>
 
 <LocalLeader>[        Delete <![CDATA[ ]]> delimiters               {{{2
-								Removes Only <CDATA[ and ]]> 
+								Removes Only <CDATA[ and ]]>
 								handy when you want	to uncomment a section.
 								You need to stand in the tag and not on an other tag
 								<![CDATA[  <tag> ]]>
@@ -1782,7 +1784,7 @@ for details.
 <LocalLeader><  Visual Place a Comment around the selected text.  {{{2
 			Place comment around the block
 <LocalLeader>5  Extend the visual selection to the matching tag.  {{{2
-<LocalLeader>%  
+<LocalLeader>%
 			Extend the visual selection to the matching tag. Make sure you are at
 			the start of the opening tag or the end of the closing tag.
 <LocalLeader>v  Visual Place a tag around the selected text.       {{{2
@@ -1894,7 +1896,7 @@ The following is a sample html.vim file type plugin you could use:
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " v im:tw=78:ts=8:ft=help:norl:
 " vim600: set foldmethod=marker  tabstop=8 shiftwidth=2 softtabstop=2 smartindent smarttab  :
-"fileencoding=iso-8859-15 
+"fileencoding=iso-8859-15
 === END_DOC
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
