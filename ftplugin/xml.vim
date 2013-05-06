@@ -1427,12 +1427,12 @@ endfunction
 
 let s:revision=
       \ substitute("$Revision: 1.36 $",'\$\S*: \([.0-9]\+\) \$','\1','')
-silent! let s:install_status =
-    \ s:XmlInstallDocumentation(expand('<sfile>:p'), s:revision)
-if (s:install_status == 1)
-    echom expand("<sfile>:t:r") . '-plugin v' . s:revision .
-        \ ': Help-documentation installed.'
-endif
+" silent! let s:install_status =
+"     \ s:XmlInstallDocumentation(expand('<sfile>:p'), s:revision)
+" if (s:install_status == 1)
+"     echom expand("<sfile>:t:r") . '-plugin v' . s:revision .
+"         \ ': Help-documentation installed.'
+" endif
 
 
 " Mappings                                                                {{{1
